@@ -1,7 +1,7 @@
 const p = console.log;
 const raw = await Deno.readTextFile("5.in");
 
-const part1 = (raw: string) => {
+const makecrates = (raw: string) => {
   const [crateraw, instrraw] = raw.split("\n\n");
   const crates: string[][] = [];
   for (let i = 0; i < 9; i++) {
@@ -16,10 +16,20 @@ const part1 = (raw: string) => {
     }
   });
   crates.unshift([]);
-  instrraw.trim().split("\n").map((line) =>
+  return crates;
+};
+
+const loadInstr = (raw: string) => {
+  const [crateraw, instrraw] = raw.split("\n\n");
+  return instrraw.trim().split("\n").map((line) =>
     line.match(/move (\d+) from (\d+) to (\d+)/)
   )
-    .map(([zz, a, b, c]) => [parseInt(a), parseInt(b), parseInt(c)])
+    .map(([zz, a, b, c]) => [parseInt(a), parseInt(b), parseInt(c)]);
+};
+
+const part1 = (raw: string) => {
+  const crates = makecrates(raw);
+  loadInstr(raw)
     .forEach(([num, from, to]) => {
       const cc = crates[from].slice(0, num);
       crates[from] = crates[from].slice(num);
