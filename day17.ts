@@ -103,24 +103,19 @@ const findPattern = (maze: Set<string>) => {
     for (let j = 0; j < arr.length - i; j++) {
       const a = arr.slice(j, j + i);
       const b = arr.slice(j + i, j + 2 * i);
-      if (compare(a, b)) {
+      const c = arr.slice(j + 2 * i, j + 3 * i);
+      if (compare(a, b) && compare(a, c)) {
         p({ arr, a, b, i, j });
-        return [j, j + i];
+        return [j, i + j];
       }
     }
   }
   return [];
 };
 
-const part = () => {
+const part = (max: number) => {
   const maze = new Set();
-  maze.add(tos([0, 0]));
-  maze.add(tos([0, 1]));
-  maze.add(tos([0, 2]));
-  maze.add(tos([0, 3]));
-  maze.add(tos([0, 4]));
-  maze.add(tos([0, 5]));
-  maze.add(tos([0, 6]));
+  [0, 1, 2, 3, 4, 5, 6].map((i) => tos([0, i])).forEach((e) => maze.add(e));
   let jetCounter = 0;
   let rockCounter = 0;
   let top = 0;
@@ -132,6 +127,11 @@ const part = () => {
     rock = start(rock, top);
     // p({ strt: rock });
     while (true) {
+      if (tops.length === 13 || tops.length === 49) {
+        draw(maze);
+        p("---------");
+      }
+
       const dir = jets[jetCounter % jets.length];
       jetCounter++;
       let rockPoss = move(dir, rock);
@@ -152,19 +152,14 @@ const part = () => {
     }
   }
   const [s, e] = findPattern(maze);
-  p({ part1: tops[2021] });
-  // draw(maze)
-  const max2 = 1000000000000 - 1;
-  const cycle = e - s;
-  const x1 = tops[s - 1]
-  const x2 = tops[e - 1]
-  const cycleNum = Math.floor((max2 - s - 1) / cycle) 
-  const rem = max2 - s - 1 - (cycle * cycleNum)
-  const x3 = tops[rem + e - 1] - x2
-  p({s, e, cycle, cycleNum, rem, x1, x2, x3});
-  const part2= x1 + (x2 - x1) * cycleNum + x3
-  p({part2})
-  p(1514285714288 - part2)
+  // tops.slice(0, 100).forEach((e, i) => p({i, e}))
+  p({ s, e, diff: e - s });
+  const starting = tops.indexOf(s) - 1;
+  const ending = tops.lastIndexOf(e);
+  p({ starting, ending, diff: ending - starting });
+  p(tops[49]);
+  p(tops[85]);
 };
 
-part();
+part(2022);
+// part(1000000000000);
